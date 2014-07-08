@@ -2,21 +2,12 @@
 REPORTER ?= dot
 TM_BUNDLE = JavaScript\ mocha.tmbundle
 SRC = $(shell find lib -name "*.js" -type f | sort)
-SUPPORT = $(wildcard support/*.js)
+BIN = ./node_modules/.bin/
 
 all: mocha.js
 
-lib/browser/diff.js: node_modules/diff/diff.js
-	cp node_modules/diff/diff.js lib/browser/diff.js
-
-mocha.js: $(SRC) $(SUPPORT) lib/browser/diff.js
-	@node support/compile $(SRC)
-	@cat \
-	  support/head.js \
-	  _mocha.js \
-	  support/tail.js \
-	  support/foot.js \
-	  > mocha.js
+mocha.js: $(SRC)
+	@$(BIN)browserify lib/mocha.js --standalone Mocha -o mocha.js
 
 clean:
 	rm -f mocha.js
